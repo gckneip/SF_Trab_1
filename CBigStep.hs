@@ -20,7 +20,7 @@ cbigStep :: (C,Memoria) -> (C,Memoria)
 cbigStep (Skip,s) = (Skip,s)
 -- cbigStep (If b c1 c2,s)  
 --cbigStep (Seq c1 c2,s)  
---cbigStep (Atrib (Var x) e,s) 
+cbigStep (Atrib (Var x) e,s) = (Skip, (mudaVar s x (ebigStep (e,s))  ))  
 --     While B C
  -- TenTimes C   ---- Executa o comando C 10 vezes
  -- Repeat C B --- Repeat C until B: executa C enquanto B é falso
