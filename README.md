@@ -9,44 +9,55 @@ Implementação de semântica operacional de passo largo (big-step operational s
 ## Estrutura do Projeto
 
 ```
-├── Memory.hs     — Tipo Memoria (lista de associação) e funções de lookup/update
-├── EBigStep.hs   — Expressões aritméticas (E) e sua avaliação big-step
-├── BBigStep.hs   — Expressões booleanas (B) e sua avaliação big-step
-├── CBigStep.hs   — Comandos (C) e sua avaliação big-step (parcial)
-├── definicao.hs  — Versão monolítica original (parcial, mantida como referência)
-├── Main.hs       — Ponto de entrada (apenas placeholder)
-└── sobs.pdf      — Enunciado do trabalho
+├── Memory.hs     — Tipo Memoria e operações de lookup/update
+├── EBigStep.hs   — Expressões aritméticas (E) e avaliação big-step
+├── BBigStep.hs   — Expressões booleanas (B) e avaliação big-step
+├── CBigStep.hs   — Comandos (C) e avaliação big-step
+├── Testes.hs     — Bateria de testes para todos os módulos
+├── Main.hs       — Ponto de entrada e programas exemplo
+├── definicao.hs  — Versão monolítica original (mantida como referência)
+├── sobs.pdf      — Enunciado do trabalho
+└── README.md     — Este arquivo
 ```
 
-## Implementado
+## Descrição dos Arquivos
 
-- [x] Tipo `Memoria` e operações (`procuraVar`, `mudaVar`)
-- [x] Expressões aritméticas: `Num`, `Var`, `Soma`, `Sub`, `Mult`, `Div`
-- [x] Expressões booleanas: `TRUE`, `FALSE`, `Not`, `And`, `Or`, `Leq`, `Igual`
-- [x] Comandos: `Skip`
+### Memory.hs
+- **`type Memoria = [(String, Int)]`** — memória representada como lista de pares (variável, valor)
+- **`exSigma :: Memoria`** — memória de exemplo: `x=10, temp=0, y=0`
+- **`procuraVar :: Memoria -> String -> Int`** — busca o valor de uma variável na memória
+- **`mudaVar :: Memoria -> String -> Int -> Memoria`** — retorna nova memória com o valor da variável atualizado
 
-## Não Implementado (a fazer)
+### EBigStep.hs
+- **`data E`** — árvore sintática de expressões aritméticas: `Num`, `Var`, `Soma`, `Sub`, `Mult`, `Div`
+- **`ebigStep :: (E, Memoria) -> Int`** — avalia uma expressão aritmética no estado atual
 
-### 1. Comandos básicos em `CBigStep.hs`
+### BBigStep.hs
+- **`data B`** — árvore sintática de expressões booleanas: `TRUE`, `FALSE`, `Not`, `And`, `Or`, `Leq`, `Igual`
+- **`bbigStep :: (B, Memoria) -> Bool`** — avalia uma expressão booleana no estado atual
 
-- [ ] **`Atrib`** — `x := e` — avaliar expressão e atualizar memória
-- [ ] **`Seq`** — `c1; c2` — executar c1, depois c2
-- [ ] **`If`** — `if b then c1 else c2` — avaliar condição e executar branch correspondente
-- [ ] **`While`** — `while b do c` — repetir enquanto condição for verdadeira
+### CBigStep.hs
+- **`data C`** — árvore sintática de comandos:
+  - `Skip` — comando vazio
+  - `Atrib E E` — atribuição (`x := e`)
+  - `Seq C C` — sequência (`c1; c2`)
+  - `If B C C` — condicional (`if b then c1 else c2`)
+  - `While B C` — repetição enquanto condição verdadeira
+  - `TenTimes C` — executa o comando 10 vezes
+  - `Repeat C B` — executa até condição ser verdadeira
+  - `Loop E E C` — executa (e2 - e1) vezes
+  - `DuplaATrib E E E E` — atribuição simultânea de duas variáveis
+  - `AtribCond B E E E` — atribuição condicional (`if b then e1 else e2`)
+  - `Swap E E` — troca o conteúdo de duas variáveis
+- **`cbigStep :: (C, Memoria) -> (C, Memoria)`** — avalia um comando no estado atual, devolvendo comando final (`Skip`) e memória resultante
 
-### 2. Comandos adicionais em `CBigStep.hs`
+### Testes.hs
+- Testes para cada função dos módulos `Memory`, `EBigStep`, `BBigStep` e `CBigStep`
+- Função `todos :: IO ()` executa a bateria completa
 
-- [ ] **`TenTimes`** — executar comando 10 vezes
-- [ ] **`Repeat`** — `repeat c until b` — executar c, depois testar b; repetir se falso
-- [ ] **`Loop`** — `loop e1 to e2 do c` — executar c (e2 - e1) vezes
-- [ ] **`DuplaATrib`** — `v1, v2 := e1, e2` — atribuir duas variáveis simultaneamente
-- [ ] **`AtribCond`** — `v := if b then e1 else e2` — atribuição condicional
-- [ ] **`Swap`** — `swap x y` — trocar valores de duas variáveis
-
-### 3. Exemplos de programas em `Main.hs`
-
-- [ ] Criar programas de teste para `Loop`, `DuplaATrib`, `Repeat`, `Swap`, `AtribCond`
-- [ ] Descomentar e rodar os exemplos existentes
+### Main.hs
+- Ponto de entrada do programa
+- Programas exemplo: `teste1`, `teste2`, `testec1`, `fatorial`, `exLoop`, `exDuplaATrib`, `exRepeat`, `exSwap`, `exAtribCond`
 
 ## Como Rodar
 
@@ -56,7 +67,13 @@ Com `ghci`:
 ghci Main.hs
 ```
 
-Ou com `runghc`:
+Para executar todos os testes:
+
+```bash
+ghci -e ':l Testes' -e 'todos'
+```
+
+Com `runghc`:
 
 ```bash
 runghc Main.hs
