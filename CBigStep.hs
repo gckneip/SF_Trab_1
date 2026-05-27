@@ -17,9 +17,16 @@ data C = While B C
    deriving(Eq,Show)   
    
 cbigStep :: (C,Memoria) -> (C,Memoria)
+
 cbigStep (Skip,s) = (Skip,s)
--- cbigStep (If b c1 c2,s)  
---cbigStep (Seq c1 c2,s)  
+
+cbigStep (If b c1 c2,s)
+  | bbigStep (b,s) = cbigStep (c1,s)
+  | otherwise      = cbigStep (c2,s)
+
+cbigStep (Seq c1 c2,s) = cbigStep (c2,s')
+  where (_, s') = cbigStep (c1,s)
+
 cbigStep (Atrib (Var x) e,s) = (Skip, (mudaVar s x (ebigStep (e,s))  ))  
 --     While B C
  -- TenTimes C   ---- Executa o comando C 10 vezes

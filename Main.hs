@@ -3,6 +3,7 @@ import Memory
 import BBigStep
 import CBigStep
 import EBigStep
+import Testes
 
 main :: IO ()
 main = print ("Trabalho 1 - Gustavo Cunha Kneip")
