@@ -3,6 +3,7 @@ import Memory
 import BBigStep
 import CBigStep
 import EBigStep
+import Testes
 
 main :: IO ()
 main = print ("Trabalho 1 - Gustavo Cunha Kneip")
@@ -41,26 +42,43 @@ progExp1 = Soma (Num 3) (Soma (Var "x") (Var "y"))
 ---
 
 
--- ---
--- --- Exemplos de expressões booleanas:
+--- Exemplos de expressões booleanas:
+
+teste1 :: B
+teste1 = (Leq (Soma (Num 3) (Num 3))  (Mult (Num 2) (Num 3)))
+
+teste2 :: B
+teste2 = (Leq (Soma (Var "x") (Num 3))  (Mult (Num 2) (Num 3)))
 
 
--- teste1 :: B
--- teste1 = (Leq (Soma (Num 3) (Num 3))  (Mult (Num 2) (Num 3)))
+-- Exemplos de Programas Imperativos:
 
--- teste2 :: B
--- teste2 = (Leq (Soma (Var "x") (Num 3))  (Mult (Num 2) (Num 3)))
+testec1 :: C
+testec1 = (Seq (Seq (Atrib (Var "z") (Var "x")) (Atrib (Var "x") (Var "y"))) 
+               (Atrib (Var "y") (Var "z")))
 
+fatorial :: C
+fatorial = (Seq (Atrib (Var "y") (Num 1))
+                (While (Not (Igual (Var "x") (Num 1)))
+                       (Seq (Atrib (Var "y") (Mult (Var "y") (Var "x")))
+                            (Atrib (Var "x") (Sub (Var "x") (Num 1))))))
 
--- ---
--- -- Exemplos de Programas Imperativos:
+-- Exemplo usando Loop: soma 1 a x 5 vezes (Loop 0 5)
+exLoop :: C
+exLoop = Loop (Num 0) (Num 5) (Atrib (Var "x") (Soma (Var "x") (Num 1)))
 
--- testec1 :: C
--- testec1 = (Seq (Seq (Atrib (Var "z") (Var "x")) (Atrib (Var "x") (Var "y"))) 
---                (Atrib (Var "y") (Var "z")))
+-- Exemplo usando DuplaATrib: atribui x=10 e y=20 simultaneamente
+exDuplaATrib :: C
+exDuplaATrib = DuplaATrib (Var "x") (Var "y") (Num 10) (Num 20)
 
--- fatorial :: C
--- fatorial = (Seq (Atrib (Var "y") (Num 1))
---                 (While (Not (Igual (Var "x") (Num 1)))
---                        (Seq (Atrib (Var "y") (Mult (Var "y") (Var "x")))
---                             (Atrib (Var "x") (Sub (Var "x") (Num 1))))))
+-- Exemplo usando Repeat: incrementa x até chegar a 5
+exRepeat :: C
+exRepeat = Repeat (Atrib (Var "x") (Soma (Var "x") (Num 1))) (Igual (Var "x") (Num 5))
+
+-- Exemplo usando Swap: troca x e y
+exSwap :: C
+exSwap = Swap (Var "x") (Var "y")
+
+-- Exemplo usando AtribCond: se x <= 0 entao y:=1 senao y:=2
+exAtribCond :: C
+exAtribCond = AtribCond (Leq (Var "x") (Num 0)) (Var "y") (Num 1) (Num 2)
