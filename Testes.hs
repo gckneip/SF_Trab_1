@@ -250,25 +250,98 @@ testaIf = do
     putStrLn ""
 
 testaWhile :: IO ()
-testaWhile = testaNaoImplementado "While"
+testaWhile = do
+    putStrLn "=== Teste While (fatorial) ==="
+    putStrLn "  comando: While (Not (Igual (Var \"x\") (Num 1))) (Seq (Atrib (Var \"y\") (Mult (Var \"y\") (Var \"x\"))) (Atrib (Var \"x\") (Sub (Var \"x\") (Num 1))))"
+    let prog = While (Not (Igual (Var "x") (Num 1)))
+                      (Seq (Atrib (Var "y") (Mult (Var "y") (Var "x")))
+                           (Atrib (Var "x") (Sub (Var "x") (Num 1))))
+    let (_, s) = cbigStep (Seq (Atrib (Var "y") (Num 1)) prog, [("x",5), ("y",0)])
+    putStrLn $ "  resultado = " ++ show s
+    putStrLn $ "  y = " ++ show (procuraVar s "y") ++ " (esperado: 120 = 5!)"
+    putStrLn ""
 
 testaTenTimes :: IO ()
-testaTenTimes = testaNaoImplementado "TenTimes"
+testaTenTimes = do
+    putStrLn "=== Teste TenTimes (incrementar x 10 vezes) ==="
+    putStrLn "  comando: TenTimes (Atrib (Var \"x\") (Soma (Var \"x\") (Num 1)))"
+    let (_, s) = cbigStep (TenTimes (Atrib (Var "x") (Soma (Var "x") (Num 1))), [("x",0)])
+    putStrLn $ "  resultado = " ++ show s
+    putStrLn $ "  x = " ++ show (procuraVar s "x") ++ " (esperado: 10)"
+    putStrLn ""
+    putStrLn "=== Teste TenTimes com x=5 ==="
+    let (_, s2) = cbigStep (TenTimes (Atrib (Var "x") (Soma (Var "x") (Num 1))), [("x",5)])
+    putStrLn $ "  resultado = " ++ show s2
+    putStrLn $ "  x = " ++ show (procuraVar s2 "x") ++ " (esperado: 15)"
+    putStrLn ""
 
 testaRepeat :: IO ()
-testaRepeat = testaNaoImplementado "Repeat"
+testaRepeat = do
+    putStrLn "=== Teste Repeat until (x ate 5) ==="
+    putStrLn "  comando: Repeat (Atrib (Var \"x\") (Soma (Var \"x\") (Num 1))) (Igual (Var \"x\") (Num 5))"
+    let (_, s) = cbigStep (Repeat (Atrib (Var "x") (Soma (Var "x") (Num 1))) (Igual (Var "x") (Num 5)), [("x",0)])
+    putStrLn $ "  resultado = " ++ show s
+    putStrLn $ "  x = " ++ show (procuraVar s "x") ++ " (esperado: 5)"
+    putStrLn ""
 
 testaLoop :: IO ()
-testaLoop = testaNaoImplementado "Loop"
+testaLoop = do
+    putStrLn "=== Teste Loop (0 a 5) ==="
+    putStrLn "  comando: Loop (Num 0) (Num 5) (Atrib (Var \"x\") (Soma (Var \"x\") (Num 1)))"
+    let (_, s) = cbigStep (Loop (Num 0) (Num 5) (Atrib (Var "x") (Soma (Var "x") (Num 1))), [("x",0)])
+    putStrLn $ "  resultado = " ++ show s
+    putStrLn $ "  x = " ++ show (procuraVar s "x") ++ " (esperado: 5)"
+    putStrLn ""
+    putStrLn "=== Teste Loop com variaveis (2 a 7) ==="
+    putStrLn "  comando: Loop (Var \"a\") (Var \"b\") (Atrib (Var \"x\") (Soma (Var \"x\") (Num 1)))"
+    let (_, s2) = cbigStep (Loop (Var "a") (Var "b") (Atrib (Var "x") (Soma (Var "x") (Num 1))), [("a",2), ("b",7), ("x",0)])
+    putStrLn $ "  resultado = " ++ show s2
+    putStrLn $ "  x = " ++ show (procuraVar s2 "x") ++ " (esperado: 5)"
+    putStrLn ""
 
 testaDuplaATrib :: IO ()
-testaDuplaATrib = testaNaoImplementado "DuplaATrib"
+testaDuplaATrib = do
+    putStrLn "=== Teste DuplaATrib (atribuicao dupla) ==="
+    putStrLn "  comando: DuplaATrib (Var \"x\") (Var \"y\") (Num 10) (Num 20)"
+    let (_, s) = cbigStep (DuplaATrib (Var "x") (Var "y") (Num 10) (Num 20), [("x",0), ("y",0)])
+    putStrLn $ "  resultado = " ++ show s
+    putStrLn $ "  x = " ++ show (procuraVar s "x") ++ " (esperado: 10)"
+    putStrLn $ "  y = " ++ show (procuraVar s "y") ++ " (esperado: 20)"
+    putStrLn ""
+    putStrLn "=== Teste DuplaATrib simultanea (troca com avaliação unica) ==="
+    putStrLn "  comando: DuplaATrib (Var \"x\") (Var \"y\") (Var \"y\") (Var \"x\")"
+    let (_, s2) = cbigStep (DuplaATrib (Var "x") (Var "y") (Var "y") (Var "x"), [("x",1), ("y",2)])
+    putStrLn $ "  resultado = " ++ show s2
+    putStrLn $ "  x = " ++ show (procuraVar s2 "x") ++ " (esperado: 2)"
+    putStrLn $ "  y = " ++ show (procuraVar s2 "y") ++ " (esperado: 1)"
+    putStrLn ""
 
 testaAtribCond :: IO ()
-testaAtribCond = testaNaoImplementado "AtribCond"
+testaAtribCond = do
+    putStrLn "=== Teste AtribCond (condicao verdadeira) ==="
+    putStrLn "  comando: AtribCond (Leq (Num 3) (Num 5)) (Var \"x\") (Num 100) (Num 0)"
+    let (_, s1) = cbigStep (AtribCond (Leq (Num 3) (Num 5)) (Var "x") (Num 100) (Num 0), [("x",10)])
+    putStrLn $ "  3 <= 5 e' True => x := 100"
+    putStrLn $ "  resultado = " ++ show s1
+    putStrLn $ "  x = " ++ show (procuraVar s1 "x") ++ " (esperado: 100)"
+    putStrLn ""
+    putStrLn "=== Teste AtribCond (condicao falsa) ==="
+    putStrLn "  comando: AtribCond (Leq (Num 10) (Num 3)) (Var \"x\") (Num 100) (Num 0)"
+    let (_, s2) = cbigStep (AtribCond (Leq (Num 10) (Num 3)) (Var "x") (Num 100) (Num 0), [("x",10)])
+    putStrLn $ "  10 <= 3 e' False => x := 0"
+    putStrLn $ "  resultado = " ++ show s2
+    putStrLn $ "  x = " ++ show (procuraVar s2 "x") ++ " (esperado: 0)"
+    putStrLn ""
 
 testaSwap :: IO ()
-testaSwap = testaNaoImplementado "Swap"
+testaSwap = do
+    putStrLn "=== Teste Swap (troca variaveis) ==="
+    putStrLn "  comando: Swap (Var \"x\") (Var \"y\")"
+    let (_, s) = cbigStep (Swap (Var "x") (Var "y"), [("x",10), ("y",5)])
+    putStrLn $ "  resultado = " ++ show s
+    putStrLn $ "  x = " ++ show (procuraVar s "x") ++ " (esperado: 5)"
+    putStrLn $ "  y = " ++ show (procuraVar s "y") ++ " (esperado: 10)"
+    putStrLn ""
 
 ---- Rodar todos os testes
 
@@ -303,7 +376,7 @@ todos = do
     testaIgual
 
     putStrLn "========================================"
-    putStrLn "  TESTES DE COMANDOS (IMPLEMENTADOS)"
+    putStrLn "  TESTES DE COMANDOS"
     putStrLn "========================================"
     testaSkip
     testaAtrib
@@ -311,10 +384,6 @@ todos = do
     testaAtribComExpressao
     testaIf
     testaSeq
-
-    putStrLn "========================================"
-    putStrLn "  TESTES DE COMANDOS (NAO IMPLEMENTADOS)"
-    putStrLn "========================================"
     testaWhile
     testaTenTimes
     testaRepeat
