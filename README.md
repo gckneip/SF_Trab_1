@@ -1,8 +1,9 @@
-# Trabalho 1 — Semântica Formal (Compiladores)
+# Trabalho 1 — Semântica Formal 
 
 **Autor:** Gustavo Cunha Kneip  
-**Disciplina:** Compilers — UFPel  
+**Disciplina:** Semântica Formal — UFPel  
 **Linguagem:** Haskell  
+**Professor:** André Rauber Du Bois
 
 Implementação de semântica operacional de passo largo (big-step operational semantics) para uma pequena linguagem imperativa.
 
